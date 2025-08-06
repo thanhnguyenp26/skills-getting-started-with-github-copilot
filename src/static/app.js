@@ -20,11 +20,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        // Participants section
+        const participantsList = details.participants
+          .map((email) => `<li>${email}</li>`)
+          .join("");
+        const participantsSection =
+          details.participants.length > 0
+            ? `<div class="participants-section">
+                 <strong>Current Participants (${details.participants.length}/${details.max_participants}):</strong>
+                 <ul class="participants-list">${participantsList}</ul>
+               </div>`
+            : `<div class="participants-section">
+                 <strong>Participants (0/${details.max_participants}):</strong>
+                 <p class="no-participants">No participants yet - be the first to sign up!</p>
+               </div>`;
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
-          <p>${details.description}</p>
+          <p><strong>Description:</strong> ${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <p><strong>Max Participants:</strong> ${details.max_participants}</p>
+          ${participantsSection}
         `;
 
         activitiesList.appendChild(activityCard);
@@ -62,6 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Reload activities to show updated participant list
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
